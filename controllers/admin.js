@@ -1,12 +1,14 @@
 const Product = require("../models/product");
 const Category = require("../models/category");
+const db = require("../utility/database");
 
 exports.getProducts = (req, res, next) => {
-  Product.getAll()
+  db.models.product
+    .findAll()
     .then((products) => {
       res.render("admin/products.ejs", {
         title: "Admin Producuts",
-        products: products[0],
+        products: products,
         path: "/admin/products",
         action: req.query.action,
       });
@@ -17,46 +19,67 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getAddProduct = (req, res, next) => {
-  Category.getAll()
-    .then((categories) => {
-      res.render("admin/add-product", {
-        title: "New Product",
-        path: "/admin/add-product",
-        categories: categories[0],
-      });
+  res.render("admin/add-product", {
+    title: "New Product",
+    path: "/admin/add-product",
+  });
+};
+
+exports.postAddProduct = async (req, res, next) => {
+  const name = req.body.name;
+  const price = req.body.price;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+
+  /*  (product.categoryId = req.body.categoryId), */
+
+  /*  db.models.product
+    .create({
+      name: name,
+      price: price,
+      imageUrl: imageUrl,
+      description: description,
+    })
+    .then((result) => {
+      console.log(result);
+      res.redirect('/)
+    })
+    .catch((err) => {
+      console.log(err);
+    }); */
+
+  const prd = db.models.product.build({
+    name: name,
+    price: price,
+    imageUrl: imageUrl,
+    description: description,
+  });
+  prd
+    .save()
+    .then((result) => {
+      console.log(result);
+      res.redirect("/");
     })
     .catch((err) => {
       console.log(err);
     });
 };
 
-exports.postAddProduct = (req, res, next) => {
-  const product = new Product();
-  (product.name = req.body.name),
-    (product.price = req.body.price),
-    (product.imageUrl = req.body.imageUrl),
-    (product.categoryId = req.body.categoryId),
-    (product.description = req.body.description),
-    product
-      .saveProduct()
-      .then(() => {
-        res.redirect("/");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-};
-
 exports.getEditProduct = (req, res, next) => {
-  Product.getById(req.params.productId)
+  db.models.product
+    .findByPk(req.params.productId)
     .then((product) => {
-      Category.getAll()
+      if (!product) {
+        return res.redirect("/");
+      }
+      db.models.category
+        .findAll()
         .then((categories) => {
           res.render("admin/edit-product", {
             title: "Edit Product",
             path: "/admin/products",
-            product: product[0][0],
-            categories: categories[0],
+            product: product,
+            categories: categories,
           });
         })
         .catch((err) => {
@@ -69,30 +92,48 @@ exports.getEditProduct = (req, res, next) => {
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const product = new Product();
+  const id = req.body.id;
+  const name = req.body.name;
+  const price = req.body.price;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+  const categoryId = req.body.categoryId;
 
-  product.id = req.body.id;
-  product.name = req.body.name;
-  product.price = req.body.price;
-  product.imageUrl = req.body.imageUrl;
-  product.description = req.body.description;
-  product.categoryId = req.body.categoryId;
-
-  Product.Update(product)
-    .then(() => {
-      res.redirect("/admin/products?action=edit");
+  db.models.product
+    .findByPk(id)
+    .then((product) => {
+      product.name = name;
+      product.price = price;
+      product.imageUrl = imageUrl;
+      product.description = description;
+      return product.save();
     })
-    .catch((err) => {
-      console.log(err, "?");
-    });
-};
-
-exports.postDeleteProduct = (req, res, next) => {
-  Product.DeleteById(req.body.productId)
-    .then(() => {
-      res.redirect("/admin/products?action=delete");
+    .then((result) => {
+      console.log("updated");
+      res.redirect("/admin/products?action=edit");
     })
     .catch((err) => {
       console.log(err);
     });
+};
+
+exports.postDeleteProduct = (req, res, next) => {
+  const id = req.body.productId;
+
+  /* db.models.product.destroy({where:{id}}).then(() => {
+    res.redirect("/admin/products?action=delete");
+  }).catch(err => {
+    console.log(err);
+  }) */
+
+  db.models.product
+    .findByPk(id)
+    .then((product) => {
+     return product.destroy();
+    })
+    .then(result => {
+      console.log('product has been deleted');
+      res.redirect("/admin/products?action=delete");
+    })
+    .catch((err) => console.log(err));
 };
