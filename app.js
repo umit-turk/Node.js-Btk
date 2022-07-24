@@ -5,6 +5,8 @@ const path = require("path");
 const ejs = require("ejs");
 const adminRoutes = require("./routes/admin");
 const errorController = require("./controllers/errors");
+const connection = require('./utility/database');
+
 
 const app = express();
 const port = 3000;
@@ -16,7 +18,15 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/admin", adminRoutes);
 app.use(userRoutes);
 
+connection.execute('SELECT * FROM products')
+  .then((result) => {
+    console.log(result[0]);
+  }).catch((err) => {
+    console.log(err);
+  })
+
 app.set("view engine", "ejs");
+
 
 app.use(errorController.get404Page);
 
