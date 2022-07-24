@@ -1,12 +1,14 @@
-const mysql = require('mysql2');
+const Sequelize = require("sequelize");
+//Sequelize dışarıya bir class tanımlıyor
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    database:'node-app',
-    password:'umit',
+const sequelize = new Sequelize("node-app", "root", "umit", {
+  host: "localhost",
+  dialect: "mysql",
 });
+const db = {};
+db.sequelize = sequelize;
+db.models = {};
+db.models.category = require('../models/category')(sequelize, Sequelize.DataTypes);
+db.models.product = require("../models/product")(sequelize, Sequelize.DataTypes);
 
-//sorgular database'e asyncron olarak gönderilir database bize bir promise gönderir
-
-module.exports = connection.promise();
+module.exports = db;
