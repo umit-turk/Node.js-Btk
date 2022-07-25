@@ -21,7 +21,7 @@
           <div class="list-group">
             <% if(categories.length> 0) { %>
               <% for(let i = 0; i < categories.length; i++) { %>
-              <a href="/categories/<%= categories[i].id %>" class="list-group-item <%= categories[i].id === 'selectedCategory' ? 'active' : 'list-group-item' %>" ><%= categories[i].name %></a>
+              <a href="/categories/<%= categories[i].id %>" class="list-group-item <%= categories[i].id == 'selectedCategory' ? 'active' : 'list-group-item' %>" ><%= categories[i].name %></a>
               <% } %>
               <% } %>
           </div>

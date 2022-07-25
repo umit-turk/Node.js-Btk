@@ -1,5 +1,3 @@
-const Product = require("../models/product");
-const Category = require("../models/category");
 const db = require("../utility/database");
 
 exports.getProducts = (req, res, next) => {
@@ -19,10 +17,18 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getAddProduct = (req, res, next) => {
-  res.render("admin/add-product", {
-    title: "New Product",
-    path: "/admin/add-product",
-  });
+  db.models.category
+    .findAll()
+    .then((categories) => {
+      res.render("admin/add-product", {
+        title: "New Product",
+        path: "/admin/add-product",
+        categories: categories,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.postAddProduct = async (req, res, next) => {
@@ -30,34 +36,18 @@ exports.postAddProduct = async (req, res, next) => {
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
+  const categoryId = req.body.categoryId;
+  const user = req.user;
 
-  /*  (product.categoryId = req.body.categoryId), */
 
-  /*  db.models.product
-    .create({
+  user.createProduct({
       name: name,
       price: price,
       imageUrl: imageUrl,
       description: description,
+      categoryId: categoryId,
     })
-    .then((result) => {
-      console.log(result);
-      res.redirect('/)
-    })
-    .catch((err) => {
-      console.log(err);
-    }); */
-
-  const prd = db.models.product.build({
-    name: name,
-    price: price,
-    imageUrl: imageUrl,
-    description: description,
-  });
-  prd
-    .save()
-    .then((result) => {
-      console.log(result);
+    .then(() => {
       res.redirect("/");
     })
     .catch((err) => {
@@ -106,10 +96,10 @@ exports.postEditProduct = (req, res, next) => {
       product.price = price;
       product.imageUrl = imageUrl;
       product.description = description;
+      product.categoryId = categoryId;
       return product.save();
     })
-    .then((result) => {
-      console.log("updated");
+    .then(() => {
       res.redirect("/admin/products?action=edit");
     })
     .catch((err) => {
@@ -120,19 +110,13 @@ exports.postEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const id = req.body.productId;
 
-  /* db.models.product.destroy({where:{id}}).then(() => {
-    res.redirect("/admin/products?action=delete");
-  }).catch(err => {
-    console.log(err);
-  }) */
-
   db.models.product
     .findByPk(id)
     .then((product) => {
-     return product.destroy();
+      return product.destroy();
     })
-    .then(result => {
-      console.log('product has been deleted');
+    .then((result) => {
+      console.log("product has been deleted");
       res.redirect("/admin/products?action=delete");
     })
     .catch((err) => console.log(err));

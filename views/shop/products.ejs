@@ -23,7 +23,7 @@
             categories.length; i++) { %>
             <a
               href="/categories/<%= categories[i].id %>"
-              class="list-group-item <%= categories[i].id === 'selectedCategory' ? 'active' : 'list-group-item' %>"
+              class=" list-group-item <%= categories[i].id == 'selectedCategory' ? 'active' : 'list-group-item' %>"
               ><%= categories[i].name %></a
             >
             <% } %> <% } %>

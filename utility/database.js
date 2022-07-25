@@ -10,5 +10,6 @@ db.sequelize = sequelize;
 db.models = {};
 db.models.category = require('../models/category')(sequelize, Sequelize.DataTypes);
 db.models.product = require("../models/product")(sequelize, Sequelize.DataTypes);
+db.models.user = require('../models/user')(sequelize, Sequelize.DataTypes);
 
 module.exports = db;
