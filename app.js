@@ -18,12 +18,17 @@ app.set("view engine", "ejs");
 //routes
 app.use("/admin", adminRoutes);
 app.use(userRoutes);
+/* db.models.product.hasOne(db.models.category); */
+db.models.product.belongsTo(db.models.category, {
+  foreignKey: {
+    allowNull: false,
+  }
+});
+db.models.category.hasMany(db.models.product);
 
 (async () => {
-  await db.sequelize.sync();
+  await db.sequelize.sync({force:true});
 })()
-
-
 
 
 app.use(errorController.get404Page);
