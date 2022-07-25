@@ -38,7 +38,7 @@ exports.postAddProduct = async (req, res, next) => {
   const description = req.body.description;
   const categoryId = req.body.categoryId;
   const user = req.user;
-
+  console.log(user,"user");
 
   user.createProduct({
       name: name,
@@ -51,7 +51,7 @@ exports.postAddProduct = async (req, res, next) => {
       res.redirect("/");
     })
     .catch((err) => {
-      console.log(err);
+      console.log(err,"?");
     });
 };
 

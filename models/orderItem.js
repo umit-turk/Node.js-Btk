@@ -1,14 +1,14 @@
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define("user", {
+  const OrderItem = sequelize.define("orderItem", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       allowNull: false,
       primaryKey: true,
     },
-    name: DataTypes.STRING,
-    email: DataTypes.STRING,
-  }, { timestamps: false });
+    quantity: DataTypes.INTEGER,
+    price: DataTypes.DOUBLE,
+  });
 
-  return User;
+  return OrderItem;
 };

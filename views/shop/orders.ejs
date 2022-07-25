@@ -17,18 +17,70 @@
 
     <div class="container pt-100" >
       <div class="row">
-       <!--  <div class="col-lg-3">
-          <div class="list-group">
-            <a href="" class="list-group-item">category 1</a
-            ><a href="" class="list-group-item">category 2</a
-            ><a href="" class="list-group-item">category 3</a>
-          </div>
-        </div> -->
-        <div class="col-lg-9">
-          
 
+        <div class="col-lg-12">
+          <% if(orders.length > 0) { %>
+            
+            
+                  
+            
+            <% orders.forEach(order => {  %>
+            
+                <div class="card mb-5">
+                  <div class="card-header">
+                    <h3>order id: #<%= order.id %></h3>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Image</th>
+                          <th>Product Name</th>
+                          <th>Price</th>
+                          <th>Quantity</th>
+                        </tr>
+                      </thead>
+                     <tbody>
+                      <% order.products.forEach(product => { %>
+                       <tr>
+                        <td>
+                          <img src="/img/<%= product.imageUrl %>" width="80" alt="">
+                        </td>
+                        <td><%= product.name %></td>
+                        <td><%= product.orderItem.quantity %></td>
+                        <td><%= product.orderItem.price %></td>
+                       </tr>
+                       <tfoot>
+                        
+                        <tr>
+                          <td colspan="2">date: <%= order.createdAt.toDateString() %> </td>
+                          <% order.products.forEach(product => { %>
+                            <td>
+                             price: 
+                              <%=  product.price * product.orderItem.quantity %> 
+                            </td>
+                          <% }) %>
+                        </tr>
+                        
+                         
+                          
+                        
 
+                       </tfoot>
+                      <% }) %>
+                     </tbody>
+                    
+                      
+                    </table>
+                  </div>
+                </div>
+                <% }) %>
 
+               
+
+           <% } %>
+
+            <% if(orders.length === 0) { %>
+              <h1>No orders</h1>
+            <% } %>
 
         </div>
       </div>
